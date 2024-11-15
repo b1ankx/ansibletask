@@ -1,0 +1,8 @@
+[debian]
+vm1 ansible_host=<IP первой ВМ>
+vm2 ansible_host=<IP второй ВМ>
+
+[debian:vars]
+ansible_user=vboxuser
+ansible_ssh_private_key_file=<путь к вашему SSH-ключу>
+

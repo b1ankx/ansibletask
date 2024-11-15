@@ -1,0 +1,20 @@
+# Устанавливаемые пакеты
+packages:
+  - net-tools
+  - curl
+  - nginx
+
+# Дефолтные страницы
+index_pages:
+  vm1: "Hello World1 !"
+  vm2: "Hello World2 !"
+
+# Пользователи
+users:
+  vm1:
+    name: User1
+    password: "{{ 'password1' | password_hash('sha512') }}"
+  vm2:
+    name: User2
+    password: "{{ 'password2' | password_hash('sha512') }}"
+

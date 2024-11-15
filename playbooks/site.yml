@@ -1,0 +1,49 @@
+- hosts: debian
+  become: yes
+  vars_files:
+    - ../group_vars/all.yml
+
+  tasks:
+    # Обновление пакетов и установка утилит
+    - name: Update and install packages
+      apt:
+        name: "{{ packages }}"
+        state: present
+        update_cache: yes
+
+    # Установка index.html
+    - name: Deploy custom index.html
+      template:
+        src: "templates/index_{{ inventory_hostname }}.html.j2"
+        dest: /var/www/html/index.html
+      notify: restart nginx
+
+    # Создание пользователей
+    - name: Create users with encrypted passwords
+      user:
+        name: "{{ users[inventory_hostname].name }}"
+        password: "{{ users[inventory_hostname].password }}"
+        shell: /bin/bash
+
+    # Настройка UFW
+    - name: Allow SSH and HTTP only
+      ufw:
+        rule: allow
+        port: "{{ item }}"
+        proto: tcp
+      with_items:
+        - ssh
+        - http
+    - name: Deny all other incoming traffic
+      ufw:
+        rule: deny
+        from: any
+        to: any
+        proto: all
+
+  handlers:
+    - name: restart nginx
+      service:
+        name: nginx
+        state: restarted
+
